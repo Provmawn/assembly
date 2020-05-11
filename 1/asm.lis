@@ -1,0 +1,169 @@
+     1                                  extern printf, scanf
+     2                                  
+     3                                  global file                       ; name of function
+     4                                  
+     5                                  file:
+     6                                  
+     7                                  pi_numerator equ 22
+     8                                  pi_denominator equ 7
+     9                                  
+    10                                  segment .data   ; ninitialized vars
+    11 00000000 546869732061726561-     msg1 db "This area function is fondly brought to you by Amman Sandhu", 10, 0
+    11 00000009 2066756E6374696F6E-
+    11 00000012 20697320666F6E646C-
+    11 0000001B 792062726F75676874-
+    11 00000024 20746F20796F752062-
+    11 0000002D 7920416D6D616E2053-
+    11 00000036 616E6468750A00     
+    12 0000003D 506C6561736520656E-     msg2 db "Please enter the radius of a circle in whole number of meters: ", 10, 0
+    12 00000046 746572207468652072-
+    12 0000004F 6164697573206F6620-
+    12 00000058 6120636972636C6520-
+    12 00000061 696E2077686F6C6520-
+    12 0000006A 6E756D626572206F66-
+    12 00000073 206D65746572733A20-
+    12 0000007C 0A00               
+    13 0000007E 546865206E756D6265-     msg3 db "The number %ld was received", 10, 0
+    13 00000087 7220256C6420776173-
+    13 00000090 207265636569766564-
+    13 00000099 0A00               
+    14 0000009B 54686520696E746567-     msg4 db "The integer part of the area will be returned to the main program. Please enjoy your circles.", 10, 0
+    14 000000A4 65722070617274206F-
+    14 000000AD 662074686520617265-
+    14 000000B6 612077696C6C206265-
+    14 000000BF 2072657475726E6564-
+    14 000000C8 20746F20746865206D-
+    14 000000D1 61696E2070726F6772-
+    14 000000DA 616D2E20506C656173-
+    14 000000E3 6520656E6A6F792079-
+    14 000000EC 6F757220636972636C-
+    14 000000F5 65732E0A00         
+    15                                  
+    16 000000FA 256C6400                input1 db "%ld", 0
+    17                                  
+    18 000000FE 546865206E756D6265-     out1 db "The number entered was %ld", 10, 0
+    18 00000107 7220656E7465726564-
+    18 00000110 2077617320256C640A-
+    18 00000119 00                 
+    19 0000011A 546865206172656120-     area db "The area of the circle is %ld", 10, 0
+    19 00000123 6F6620746865206369-
+    19 0000012C 72636C652069732025-
+    19 00000135 6C640A00           
+    20                                  
+    21 00000139 72656D61696E646572-     remainder_numerator db "remainder is %ld / ", 0
+    21 00000142 20697320256C64202F-
+    21 0000014B 2000               
+    22 0000014D 256C640A00              remainder_denominator db "%ld", 10, 0
+    23                                  
+    24                                  segment .bss
+    25                                  ; empty segment
+    26                                  
+    27                                  segment .text
+    28                                  
+    29                                  ; back up registers
+    30 00000000 55                      push rbp
+    31 00000001 4889E5                  mov rbp, rsp
+    32 00000004 57                      push rdi
+    33 00000005 56                      push rsi
+    34 00000006 52                      push rdx
+    35 00000007 51                      push rcx
+    36 00000008 4150                    push r8
+    37 0000000A 4151                    push r9
+    38 0000000C 4152                    push r10
+    39 0000000E 4153                    push r11
+    40 00000010 4154                    push r12
+    41 00000012 4155                    push r13
+    42 00000014 4156                    push r14
+    43 00000016 4157                    push r15
+    44 00000018 53                      push rbx
+    45 00000019 9C                      pushf
+    46 0000001A 6AFF                    push qword -1                       ; push 64bit number to have 16 pushes
+    47                                  
+    48                                  
+    49 0000001C B800000000              mov qword rax, 0
+    50 00000021 48BF-                   mov rdi, msg1
+    50 00000023 [0000000000000000] 
+    51 0000002B E8(00000000)            call printf
+    52                                  
+    53 00000030 B800000000              mov qword rax, 0
+    54 00000035 48BF-                   mov rdi, msg2
+    54 00000037 [3D00000000000000] 
+    55 0000003F E8(00000000)            call printf
+    56                                  
+    57 00000044 48BF-                   mov qword rdi, input1
+    57 00000046 [FA00000000000000] 
+    58 0000004E 6AFF                    push qword -1                       ; push qword to top of stack
+    59 00000050 4889E6                  mov qword rsi, rsp                  ; rsi is now equal to the top of the stack
+    60 00000053 B800000000              mov qword rax, 0            
+    61 00000058 E8(00000000)            call scanf                  
+    62 0000005D 415F                    pop qword r15                       ; pop qword from scanf push
+    63                                  
+    64 0000005F 48BF-                   mov qword rdi, out1                 ; pint inputted integer
+    64 00000061 [FE00000000000000] 
+    65 00000069 4C89FE                  mov rsi, r15
+    66 0000006C B800000000              mov qword rax, 0
+    67 00000071 E8(00000000)            call printf
+    68                                  
+    69 00000076 4C89F8                  mov qword rax, r15                  ; mov r into rax
+    70 00000079 BA00000000              mov qword rdx, 0                    ; zero out high order bits
+    71                                  
+    72 0000007E 49F7EF                  imul r15                            ; rax = r^2
+    73                                  
+    74 00000081 41BF16000000            mov r15, pi_numerator               ; rax = r^2 * 22
+    75 00000087 49F7EF                  imul r15
+    76                                  
+    77 0000008A 41BF07000000            mov r15, pi_denominator             ; rax = (r^2 * 22) / 7
+    78 00000090 4899                    cqo
+    79 00000092 49F7FF                  idiv r15
+    80 00000095 4D89FD                  mov r13, r15                        ; save denominator for remainder
+    81                                  
+    82 00000098 4989C4                  mov r12, rax                        ; save the area in r12 to return later
+    83 0000009B 4989D6                  mov r14, rdx                        ; save the remainder in r14
+    84                                  
+    85 0000009E 48BF-                   mov qword rdi, area                 ; print area from r12
+    85 000000A0 [1A01000000000000] 
+    86 000000A8 4C89E6                  mov rsi, r12
+    87 000000AB 4C89E2                  mov qword rdx, r12
+    88 000000AE B800000000              mov qword rax, 0
+    89 000000B3 E8(00000000)            call printf
+    90                                  
+    91 000000B8 48BF-                   mov qword rdi, remainder_numerator      ; print remaindor numerator
+    91 000000BA [3901000000000000] 
+    92 000000C2 4C89F6                  mov rsi, r14
+    93 000000C5 4C89F2                  mov qword rdx, r14
+    94 000000C8 B800000000              mov qword rax, 0
+    95 000000CD E8(00000000)            call printf
+    96                                  
+    97 000000D2 48BF-                   mov qword rdi, remainder_denominator    ; print remainder denominator
+    97 000000D4 [4D01000000000000] 
+    98 000000DC 4C89EE                  mov rsi, r13
+    99 000000DF 4C89EA                  mov qword rdx, r13
+   100 000000E2 B800000000              mov qword rax, 0
+   101 000000E7 E8(00000000)            call printf
+   102                                  
+   103 000000EC 48BF-                   mov qword rdi, msg4                     ; output message
+   103 000000EE [9B00000000000000] 
+   104 000000F6 B800000000              mov qword rax, 0
+   105 000000FB E8(00000000)            call printf
+   106                                  
+   107 00000100 4C89E0                  mov qword rax, r12                      ; sets the return value in rax
+   108                                  
+   109 00000103 415F                    pop r15                                 ; pop random value that was stored         
+   110                                  ; restore backed up registers
+   111 00000105 9D                      popf
+   112 00000106 5B                      pop rbx
+   113 00000107 415F                    pop r15
+   114 00000109 415E                    pop r14
+   115 0000010B 415D                    pop r13
+   116 0000010D 415C                    pop r12
+   117 0000010F 415B                    pop r11
+   118 00000111 415A                    pop r10
+   119 00000113 4159                    pop r9
+   120 00000115 4158                    pop r8
+   121 00000117 59                      pop rcx
+   122 00000118 5A                      pop rdx
+   123 00000119 5E                      pop rsi
+   124 0000011A 5F                      pop rdi
+   125 0000011B 5D                      pop rbp
+   126                                  
+   127 0000011C C3                      ret                                               ; pop the integer stack and jump to the address represented by the popped value
